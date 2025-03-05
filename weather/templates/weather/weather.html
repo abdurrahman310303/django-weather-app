@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+
+      h2 {
+        color: #3c6e71;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      /* Form Styles */
+      form {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        max-width: 500px;
+        width: 100%;
+        padding: 10px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      input {
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        flex: 1;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 12px 18px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      /* Weather Container Styles */
+      .weather-container {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .error {
+        color: #ff4d4d;
+        font-size: 18px;
+        margin-top: 10px;
+      }
+
+      /* Default Weather Section */
+      .default-weather {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        gap: 20px;
+        max-width: 1200px;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      .city-weather {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        text-align: center;
+        flex: 1 1 calc(25% - 20px);
+        min-width: 250px;
+        max-width: 300px;
+        transition: transform 0.3s ease;
+      }
+
+      .city-weather:hover {
+        transform: translateY(-10px);
+      }
+
+      .city-weather h4 {
+        margin: 0 0 10px;
+        color: #333;
+        font-size: 1.5rem;
+      }
+
+      .city-weather p {
+        margin: 5px 0;
+        font-size: 1rem;
+        color: #666;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .default-weather {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .city-weather {
+          flex: 1 1 100%;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Weather App 🌤️</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="city" placeholder="Enter city name" required />
+      <button type="submit">Get Weather</button>
+    </form>
+
+    {% if weather_data %} {% if weather_data.error %}
+    <p class="error">{{ weather_data.error }}</p>
+    {% else %}
+    <div class="weather-container">
+      <h3>Weather in {{ weather_data.name }}</h3>
+      <p>Temperature: {{ weather_data.main.temp }}°C</p>
+      <p>Humidity: {{ weather_data.main.humidity }}%</p>
+      <p>Wind Speed: {{ weather_data.wind.speed }} m/s</p>
+      <p>Condition: {{ weather_data.weather.0.description }}</p>
+    </div>
+    {% endif %} {% endif %}
+
+    <div class="default-weather">
+      {% for city, data in city_weather_data.items %}
+      <div class="city-weather">
+        <h4>{{ city }}</h4>
+        {% if data.error %}
+        <p class="error">{{ data.error }}</p>
+        {% else %}
+        <p>Temperature: {{ data.main.temp }}°C</p>
+        <p>Humidity: {{ data.main.humidity }}%</p>
+        <p>Wind Speed: {{ data.wind.speed }} m/s</p>
+        <p>Condition: {{ data.weather.0.description }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
